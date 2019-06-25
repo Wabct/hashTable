@@ -1,7 +1,7 @@
 #pragma once
 
-#ifndef _UNORDERED_MAP_
-#define _UNORDERED_MAP_
+#ifndef __HASHTABLE_HPP
+#define __HASHTABLE_HPP
 
 
 template<typename T1, typename T2>
@@ -273,4 +273,4 @@ void hashTable<T1, T2>::resize(int newsize)
 	_maxcapacity = (int)(_capacity * _loadFactor);
 }
 
-#endif // _UNORDERED_MAP_
+#endif // __HASHTABLE_HPP
