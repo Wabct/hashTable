@@ -10,8 +10,9 @@ class hashItem;
 template<typename T1, typename T2>
 class hashTable
 {
-	typedef std::string String;
-	typedef std::list<T2> List;
+	using  String = std::string;
+	template<typename TT>
+	using  List =  std::list<TT>;
 
 	static_assert(sizeof(int) == sizeof(T1) || sizeof(String) == sizeof(T1),
 		"T type is not the specified Key including int and string");
@@ -21,7 +22,7 @@ public:
 
 	void insert(const T1& key, const T2& value);
 	T2 values(const T1& key);
-	List values();
+	List<T2> values();
 	T2 operator[] (const T1& key);
 	T2 operator() (const T1& key);
 	void remove(const T1& key);
@@ -105,22 +106,19 @@ float hashTable<T1, T2>::_loadFactor = 0.75f;
 
 template<typename T1, typename T2>
 hashTable<T1, T2>::hashTable() :
-	_capacity(_initalcapacity), _maxcapacity((int)(_capacity*_loadFactor)), _currentsize(0)
-{
+	_capacity(_initalcapacity), _maxcapacity((int)(_capacity*_loadFactor)), _currentsize(0){
 	_container = new hashItem<T1, T2>* [16]();
 }
 
 template<typename T1, typename T2>
-hashTable<T1,T2>::~hashTable()
-{
+hashTable<T1,T2>::~hashTable(){
 	clear();
 
 	delete[] _container;
 }
 
 template<class T1, class T2>
-void hashTable<T1, T2>::insert(const T1& key,const T2& value)
-{
+void hashTable<T1, T2>::insert(const T1& key,const T2& value){
 	if (_currentsize >= _maxcapacity) {
 		resize(_capacity * 2);
 	}
@@ -149,9 +147,8 @@ T2 hashTable<T1, T2>::values(const T1& key) {
 }
 
 template<class T1, class T2>
-hashTable<T1, T2>::List hashTable<T1, T2>::values() {
-	List res;
-	res.reverse(count());
+hashTable<T1, T2>::List<T2> hashTable<T1, T2>::values() {
+	List<T2> res;
 	for (int i = 0; i < _capacity; ++i) {
 		hashItem<T1, T2> * item = _container[i];
 		while (item != NULL) {
@@ -164,20 +161,17 @@ hashTable<T1, T2>::List hashTable<T1, T2>::values() {
 
 
 template<class T1, class T2>
-T2 hashTable<T1, T2>::operator[](const T1& key)
-{
+T2 hashTable<T1, T2>::operator[](const T1& key){
 	return values(key);
 }
 
 template<class T1, class T2>
-T2 hashTable<T1, T2>::operator()(const T1& key)
-{
+T2 hashTable<T1, T2>::operator()(const T1& key){
 	return values(key);
 }
 
 template<class T1, class T2>
-void hashTable<T1, T2>::remove(const T1 & key)
-{
+void hashTable<T1, T2>::remove(const T1 & key){
 	int hash = gethash(key);
 	int index = hash & (_capacity - 1);
 
@@ -207,8 +201,7 @@ void hashTable<T1, T2>::remove(const T1 & key)
 }
 
 template<class T1, class T2>
-void hashTable<T1, T2>::clear()
-{
+void hashTable<T1, T2>::clear(){
 	for (int i = 0; i < _capacity; ++i) {
 		hashItem<T1, T2> * item = _container[i];
 		while (item != NULL) {
@@ -246,8 +239,7 @@ int hashTable<T1, T2>::gethash(T1 key) {
 }
 
 template<class T1, class T2>
-bool hashTable<T1, T2>::putitem(hashItem<T1, T2>* item, hashItem<T1, T2>** container, int capacity)
-{
+bool hashTable<T1, T2>::putitem(hashItem<T1, T2>* item, hashItem<T1, T2>** container, int capacity){
 	int hash = gethash(item->getKey());
 	int index = hash & (capacity - 1);// hash % _capacity;
 	
@@ -277,8 +269,7 @@ bool hashTable<T1, T2>::putitem(hashItem<T1, T2>* item, hashItem<T1, T2>** conta
 }
 
 template<class T1, class T2>
-void hashTable<T1, T2>::resize(int newsize)
-{
+void hashTable<T1, T2>::resize(int newsize){
 	hashItem<T1, T2> ** newcontainer = new hashItem<T1, T2>*[newsize]();
 	for (int i = 0; i < _capacity; ++i) {
 		hashItem<T1, T2> * item = _container[i];
