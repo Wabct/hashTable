@@ -218,7 +218,7 @@ void hashTable<T1, T2>::clear(){
 
 template<class T1, class T2>
 bool hashTable<T1, T2>::contains(const T1& key) {
-	return value(key) != NULL;
+	return values(key) != NULL;
 }
 
 
