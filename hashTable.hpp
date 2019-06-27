@@ -5,48 +5,23 @@
 
 
 template<typename T1, typename T2>
-class hashItem
-{
-public:
-	hashItem(const T1& key, const T2& value) : _key(key), _value(value) {};
-
-	const T1& getKey() {
-		return _key;
-	}
-
-	const T2& getValue() {
-		return _value;
-	}
-
-	void setValue(const T2& value){
-		_value = value;
-	}
-
-	hashItem<T1, T2>* next() {
-		return _next;
-	}
-
-	void setNext(hashItem<T1, T2>* next) {
-		_next = next;
-	}
-
-private:
-	T1 _key;
-	T2 _value;
-	hashItem<T1, T2>* _next;
-};
+class hashItem;
 
 template<typename T1, typename T2>
 class hashTable
 {
-	static_assert(sizeof(int) == sizeof(T1) || sizeof(string) == sizeof(T1),
+	typedef std::string String;
+	typedef std::list<T2> List;
+
+	static_assert(sizeof(int) == sizeof(T1) || sizeof(String) == sizeof(T1),
 		"T type is not the specified Key including int and string");
 public:
 	hashTable();
 	~hashTable();
 
 	void insert(const T1& key, const T2& value);
-	T2 value(const T1& key);
+	T2 values(const T1& key);
+	List values();
 	T2 operator[] (const T1& key);
 	T2 operator() (const T1& key);
 	void remove(const T1& key);
@@ -55,7 +30,6 @@ public:
 	bool isEmpty();
 	int count();
 private:
-	/*int gethash(const T1& key);*/
 	int gethash(T1 key);
 	template<typename TT1>
 	static int gethash_(const TT1& key) {
@@ -67,11 +41,11 @@ private:
 		return key;
 	}
 	template<>
-	static int gethash_<std::string>(const std::string& key)
+	static int gethash_<String>(const String& key)
 	{
 		int seed = 131; // 31 131 1313 13131 131313 etc..
 		int hash = 0;
-		string Key = key;
+		String Key = key;
 		const char * str = Key.c_str();
 		while (*str)
 		{
@@ -91,7 +65,37 @@ private:
 	
 	hashItem<T1, T2> ** _container;
 };
+template<typename T1, typename T2>
+class hashItem
+{
+public:
+	hashItem(const T1& key, const T2& value) : _key(key), _value(value) {};
 
+	const T1& getKey() {
+		return _key;
+	}
+
+	const T2& getValue() {
+		return _value;
+	}
+
+	void setValue(const T2& value) {
+		_value = value;
+	}
+
+	hashItem<T1, T2>* next() {
+		return _next;
+	}
+
+	void setNext(hashItem<T1, T2>* next) {
+		_next = next;
+	}
+
+private:
+	T1 _key;
+	T2 _value;
+	hashItem<T1, T2>* _next;
+};
 
 template<typename T1, typename T2>
 int hashTable<T1, T2>::_initalcapacity = 16;
@@ -127,7 +131,7 @@ void hashTable<T1, T2>::insert(const T1& key,const T2& value)
 }
 
 template<class T1, class T2>
-T2 hashTable<T1, T2>::value(const T1& key) {
+T2 hashTable<T1, T2>::values(const T1& key) {
 	int hash = gethash(key);
 	int index = hash & (_capacity - 1);
 
@@ -145,15 +149,30 @@ T2 hashTable<T1, T2>::value(const T1& key) {
 }
 
 template<class T1, class T2>
+hashTable<T1, T2>::List hashTable<T1, T2>::values() {
+	List res;
+	res.reverse(count());
+	for (int i = 0; i < _capacity; ++i) {
+		hashItem<T1, T2> * item = _container[i];
+		while (item != NULL) {
+			res.push_back(item->getValue());
+			item = item->next();
+		}
+	}
+	return res;
+}
+
+
+template<class T1, class T2>
 T2 hashTable<T1, T2>::operator[](const T1& key)
 {
-	return value(key);
+	return values(key);
 }
 
 template<class T1, class T2>
 T2 hashTable<T1, T2>::operator()(const T1& key)
 {
-	return value(key);
+	return values(key);
 }
 
 template<class T1, class T2>
@@ -274,3 +293,5 @@ void hashTable<T1, T2>::resize(int newsize)
 }
 
 #endif // __HASHTABLE_HPP
+
+
