@@ -266,6 +266,7 @@ bool hashTable<T1, T2>::putitem(hashItem<T1, T2>* item, hashItem<T1, T2>** conta
 			}
 		}
 	}
+	return false;
 }
 
 template<class T1, class T2>
