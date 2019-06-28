@@ -140,7 +140,7 @@ T2 hashTable<T1, T2>::values(const T1& key) {
 			return temp->getValue();
 		}
 		else {
-			return NULL;
+			temp = temp->next();
 		}
 	}
 	return NULL;
