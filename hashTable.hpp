@@ -275,6 +275,7 @@ void hashTable<T1, T2>::resize(int newsize){
 	for (int i = 0; i < _capacity; ++i) {
 		hashItem<T1, T2> * item = _container[i];
 		while (item != NULL) {
+			item->setNext(NULL);
 			putitem(item, newcontainer, newsize);
 			item = item->next();
 		}
